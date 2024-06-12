@@ -10,17 +10,37 @@ I want a syntax which can apply to ALL operations!
 Which is easily extensible.
 
 ```
+<ID>        ::= [a-zA-Z_][a-zA-Z_0-9]*
+<IntVal>    ::= (-?[1-9][0-9]*|0)
+<RealVal>   ::= <IntVal>(\.[0-9]+)?r
+<Val>       ::= <ID> | <IntVal> | <RealVal>
 
 <BinOp>     ::= add | sub | mult | div | mod | lt | gt | lte | gte | eq | neq | and | or | xor | rsh | lsh
 <UnOp>      ::= neg | not | flip
 <StackOp>   ::= push | pop
-<CntrlOp>   ::=
-<Op>        ::= <BinOp> | <UnOp>
+<CntrlOp>   ::= jump | return
+<Op>        ::= <BinOp> | <UnOp> | <StackOp> | <CntrlOp>
 
+<ValList>   ::= <Val> | <PropValList>, <Val>
+<CallArgs>  ::= { <ValList>? }
 
+<Attr>      ::= [_A-Z]+
+<AttrList>  ::= <Attr> | <AttrList>, <Attr>
+<Attrs>     ::= \(<AttrList>?\)
+<OperandList> ::= <Val> | <Val>, <Val> | <Val>, <Val>, <Val>
 
-Ok what about labels though???
-Do we care about labels??
+<Stmt>      ::= <Op> <Attrs>? <OperandList>? 
+            |   call (<ID>,)? <ID> <CallArgs>?
+
+<Line>      ::= (<ID>:)? <Stmt>;
+
+<IDPair>        ::= <Prim> <ID>
+<IDPairBlock>   ::= { (<IDPair>;)* }
+<Func>          ::= func <ID> 
+                    <IDPairBlock>? (=> <PrimType>)?
+                    (lcls <IDPairBlock>)?
+                    (stack <IntVal>)?
+                    text { <Line>+ }
 
 ```
 
@@ -80,13 +100,6 @@ What about return types?
 
 <FullStmt>      ::= <Label>? <PartialStmt>;
 
-<IDPair>        ::= <Prim> <ID>
-<IDPairBlock>   ::= { (<IDPair>;)* }
-<Func>          ::= func <ID> 
-                    <IDPairBlock>? (=> <PrimType>)?
-                    lcls <IDPairBlock> 
-                    stack <IntVal>
-                    text { <FullStmt>* }
 
 ```
 
