@@ -11,71 +11,59 @@ A function will have arguments, local variables, and a stack?
 What about return types?
 
 ```
-Types:
-    real: 64-bit floating point number.
-    int: 64-bit signed integer.
+<Prim>      ::= int | real
+<ID>        ::= [a-zA-Z_][a-zA-Z_0-9]*
+<IntVal>    ::= (-?[1-9][0-9]*|0)
+<RealVal>   ::= <IntVal>(\.[0-9]+)?r
+<Val>       ::= <ID> | <IntVal> | <RealVal>
+<BinOp>     ::= add | sub | mult | div | mod | lt | gt | lte | gte | eq | neq | and | or | xor | rsh | lsh
+<UnOp>      ::= neg | not | flip
 
-Operations:
-  Simple Arithmetic:
-    +   add 
-    -   subtract
-    *   multiply 
-    /   divide 
-    %   modulus
+<MovStmt>       ::= <ID> $ <Val>
+<BinStmt>       ::= <ID> $ <Val> <BinOp> <Val>
+<SelfBinStmt>   ::= <ID> $ <BinOp> <Val>
+<UnStmt>        ::= <ID> $ <UnOp> <Val>
+<SelfUnStmt>    ::= <ID> $ <UnOp>
 
-  Comparisons:
-    =   Eq
-    !=  Neq
-    <   Lt
-    >   Gt
-    <=  Lte
-    >=  gte
+<PropValList>   ::= <Val> | <PropValList>, <Val>
+<ValList>       ::= e | <PropValList>
 
-* For all operations, if one argument is real
-the second argument will be converted to real (if needed)
-* Modulus will only work on integral values.
-If either is real, an error will be thrown.
+<CallStmt>      ::= <ID> $ <ID> {ValList}
+<VoidCallStmt>  ::= <ID> {ValList}
 
-Instruction Set:
+<PushStmt>      ::= push <Val>
+<PopStmt>       ::= pop <ID>?
+<PeekStmt>      ::= peek <ID>
+<DoStmt>        ::= (do|doip) <Prim>? (<BinOp>|<UnOp>)
 
- Simple Variable Based:
-    <Id> $ <Id>    // Transfer values from IDs. (Casting is done if possible)
-    <Id> $ <Cnst>  // Assign a constant to an ID. 
-    <Id> $ <Id> <Op> <Id>  // Perform a simple operation and store result.
-    
- Stack Based:
-    pushq <Id>     // Push 64-bit values onto the operand stack.
-    pushq <Cnst>
+<Label>         ::= @[a-zA-Z_0-9]+
+<JumpStmt>      ::= jump <Label> (when <ID>)?
+<ReturnStmt>    ::= return <Val>?
 
-    popq <Id>      // Pop 64-bit value into an ID.  (With the stack, little type checking can really be done)
-    popq           // Just pop a 64-bit value and throw it out.
+// Comments will just go until the newline than stop.
+<Comment>       ::= #.*\n
 
-    peekq <Id>     // Simply store the top of the stack into an ID.
+<PartialStmt>   ::= <MovStmt>
+                |   <BinStmt>
+                |   <SelfBinStmt>
+                |   <UnStmt>
+                |   <SelfUnStmt>
+                |   <CallStmt>
+                |   <VoidCallStmt>
+                |   <PushStmt>
+                |   <PopStmt>
+                |   <PeekStmt>
+                |   <DoStmt>
+                |   <JumpStmt>
+                |   <ReturnStmt>
 
-    doq int  <Op>  // Perform a 64-bit integral stack operation.
-    doq real <Op>  // Performa a 64-bit floating point stack operation.
-    
-    doipq int <Op>  // These are the same as the 2 above, just without popping
-    doipq real <Op> // any values from the operand stack.
+<FullStmt>      ::= <Label>? <PartialStmt>;
 
- Control Flow: 
+<IDPair>        ::= <Prim> <ID>
+<IDPairBlock>   ::= { (<IDPair>;)* }
+<Func>          ::= func <ID> 
+                    args <IDPairBlock> 
+                    lcls <IDPairBlock> 
+                    text { <FullStmt>* }
 
-
-
-func myFunc(args...) => return type 
-lcls {
-    int x2;
-    real x3; 
-}
-code {
-    push64 
-
-    x $ x + y;  // Simple addition here...
-
-    ... Instructions ??
-    ... Stack based stuff??
-    ... Different operators for different types??
-    ... Labels and stuff???
-
-}
 ```
