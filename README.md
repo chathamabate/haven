@@ -10,6 +10,7 @@ My hobby programming langauge.
 A function will have arguments, local variables, and a stack?
 What about return types?
 
+
 ```
 <Prim>      ::= int | real
 <ID>        ::= [a-zA-Z_][a-zA-Z_0-9]*
@@ -62,8 +63,62 @@ What about return types?
 <IDPair>        ::= <Prim> <ID>
 <IDPairBlock>   ::= { (<IDPair>;)* }
 <Func>          ::= func <ID> 
-                    args <IDPairBlock> 
+                    <IDPairBlock>? (=> <PrimType>)?
                     lcls <IDPairBlock> 
+                    stack <IntVal>
                     text { <FullStmt>* }
 
+```
+
+```
+func isPrime
+{ int num; } => int
+lcls {
+    int i;
+    int cond;
+    int modRes;
+}
+stack 0
+text {
+    i $ 2;
+
+    @loop modRes $ num % i;
+    jump @continue when modRes 
+
+    # We only make it in here when modRes is 0.
+    return 0;
+
+    @continue i $ + 1;
+    cond $ i >= num; 
+    jump @loop_exit when cond;
+    jump @loop;
+
+    @loop_exit return 1;
+}
+
+func doSomeMath
+{ int a; int b; int c; } => int
+lcls { int retval; }
+stack 12
+text {
+    // calc (b * (a + b + c)) / (a % b)
+    push b
+    push a
+    do mod
+
+    push c
+    push b
+    do add
+
+    push a
+    do add
+
+    push b
+    do mult
+
+    do div
+
+    pop retval; 
+    return retval;
+}
 ```
