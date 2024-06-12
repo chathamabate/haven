@@ -5,6 +5,25 @@ My hobby programming langauge.
 ## `haven-as`
 `haven-as` will be a pseudo assembly compiler.
 
+### Opcodes
+I want a syntax which can apply to ALL operations!
+Which is easily extensible.
+
+```
+
+<BinOp>     ::= add | sub | mult | div | mod | lt | gt | lte | gte | eq | neq | and | or | xor | rsh | lsh
+<UnOp>      ::= neg | not | flip
+<StackOp>   ::= push | pop
+<CntrlOp>   ::=
+<Op>        ::= <BinOp> | <UnOp>
+
+
+
+Ok what about labels though???
+Do we care about labels??
+
+```
+
 ### `haven-as` Grammar
 
 A function will have arguments, local variables, and a stack?
@@ -17,6 +36,7 @@ What about return types?
 <IntVal>    ::= (-?[1-9][0-9]*|0)
 <RealVal>   ::= <IntVal>(\.[0-9]+)?r
 <Val>       ::= <ID> | <IntVal> | <RealVal>
+
 <BinOp>     ::= add | sub | mult | div | mod | lt | gt | lte | gte | eq | neq | and | or | xor | rsh | lsh
 <UnOp>      ::= neg | not | flip
 
