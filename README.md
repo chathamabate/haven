@@ -4,6 +4,26 @@ My hobby programming langauge.
 
 ## `haven-as`
 `haven-as` will be a pseudo assembly compiler.
+### Instructions
+
+Note that in the below definitions, a `<Val>` is either an `<ID>`, `<RealVal>`, or `<IntVal>`.
+
+#### `mov`
+##### Forms
+ * `mov` `<ID>`, `<Val>`
+   * Equivelant to `<ID> <- <Val>`.
+
+#### `add`, `sub`, `mult`, `div`
+##### Forms
+ * `add`  
+.. Maybe it's time to go to bed..
+
+#### `mod`
+#### `lt`
+#### `gt`
+#### `lte`
+#### `gte`
+#### `neg`
 
 ### Grammar
 ```
