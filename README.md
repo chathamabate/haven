@@ -40,6 +40,22 @@ My hobby programming langauge.
                     text { <Line>+ }
 ```
 
+### Lexemes
+```
+<ID>        ::= [a-zA-Z_][a-zA-Z_0-9]*
+<IntVal>    ::= (-?[1-9][0-9]*|0)
+<RealVal>   ::= <IntVal>(\.[0-9]+)?r
+<Val>       ::= <ID> | <IntVal> | <RealVal>
+
+// Should these be grouped together in some weird way?
+// Hmmm, idk, I wanna play some basketball tbh...
+<MovOp>     ::= mov
+<MathOp>    ::= add | sub | mult | div | mod | lt | gt | lte | gte | neg
+<BitOp>     ::= not | flip | and | or | xor | rsh | lsh | eq | neq
+<StackOp>   ::= push | pop
+<CntrlOp>   ::= jump | return
+```
+
 
 ### Operation Semantics
 
