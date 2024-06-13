@@ -32,12 +32,15 @@ My hobby programming langauge.
 <Line>      ::= (<ID>:)? <Stmt>;
 
 <IDPair>        ::= <Prim> <ID>
-<IDPairBlock>   ::= { (<IDPair>;)* }
+<IDPairBlock>   ::= { (<IDPair>;)+ }
 <Func>          ::= func <ID> 
                     <IDPairBlock>? (=> <PrimType>)?
                     (lcls <IDPairBlock>)?
                     (stack <IntVal>)?
                     text { <Line>+ }
+<Sig>           ::= extern func <ID> <IDPairBlock>? (=> <PrimType>)?
+
+<Program>       ::= (<Func>|<Sig>)*
 ```
 
 ### Lexemes
@@ -45,17 +48,100 @@ My hobby programming langauge.
 <ID>        ::= [a-zA-Z_][a-zA-Z_0-9]*
 <IntVal>    ::= (-?[1-9][0-9]*|0)
 <RealVal>   ::= <IntVal>(\.[0-9]+)?r
-<Val>       ::= <ID> | <IntVal> | <RealVal>
-
-// Should these be grouped together in some weird way?
-// Hmmm, idk, I wanna play some basketball tbh...
-<MovOp>     ::= mov
-<MathOp>    ::= add | sub | mult | div | mod | lt | gt | lte | gte | neg
-<BitOp>     ::= not | flip | and | or | xor | rsh | lsh | eq | neq
-<StackOp>   ::= push | pop
-<CntrlOp>   ::= jump | return
+<ResWords>  ::= mov, add, sub, mult, dif, mod, lt, gt, lte, gte, neg
+                not, flip, and, or, xor, rsh, lsh, eq, neq, push, pop,
+                jump, return, call, int, real, func, lcls, stack, text, extern
+<Attrs>     ::= @INT, @REAL
+<Symbols>   ::= \, {, }, :, ;, =>
 ```
 
+### Example Programs
+```
+func isPrime
+{ int num; } => int
+lcls {
+    int i;
+    int rem;
+    int cond;
+}
+text {
+    mov i, 2;
+loop:
+    mod rem, num, i; 
+    jump continue, rem;
+
+    return 1;
+
+continue:
+    add i, 1;
+    lt cond, i, num;    
+    not cond;
+    jump exit, cond; 
+    jump loop;
+    
+exit:
+    return 0;
+}
+
+# This function will return a random real number between 0.0 and 1.0.
+extern func rand => real
+
+# Montecarlo pi calculation.
+func calcPi
+{ int trials; } => real
+lcls {
+    int hits;
+    int t;
+    
+    real x;
+    real y;
+    real mag;
+
+    int cond;
+
+    real pi;
+} 
+stack 32
+text {
+
+    mov t, 0;
+loop:
+    call x, rand;
+    call y, rand;
+
+    push x;
+    push x;
+    mult @REAL;
+    
+    push y;
+    push y;
+    mult @REAL;
+    
+    add @REAL;
+
+    pop mag;
+    gt cond, mag, 1.0r;
+
+    jump skip, cond;
+    add hits, 1;    
+
+skip: 
+    add t, 1;
+    gte cond, t, numTrials;
+    jump exit, cond;
+    jump loop;
+
+exit:
+    push @REAL trials;
+    push @REAL hits;
+    div @REAL;
+    push 4.0r;
+    mult @REAL;
+
+    pop pi;
+    return pi;
+}
+```
 
 ### Operation Semantics
 
@@ -72,6 +158,9 @@ __Simple Math :__ `add`, `sub`, `mult`, `div`, `neg`
     * When no operands are given (stack based), the user can provide a type attribute
       to specify whether floating point or integral math should be done.
       Use `@REAL` to specify a `real` operation. Use `@INT` to specify an integral operation.
+    * When operands are given, default casting can be overriden with a type attribute. For example,
+      `div @real x, 1, 2;` will convert `1` and `2` to `real`s before the division occurs. `0.5r` will
+      be stored in `x` given its type is `real`.
 
 __Mod Math :__  `mod`
     * Modulus requires only `int` operands.
@@ -93,6 +182,8 @@ __Bitwise Comparisons :__ `eq`, `neq`, `not`
     * Operand(s) can be any type.
 
 __Stack Based :__ `push`, `pop`, `peek`
-
+    * Type attributes can be given in `push` to perform a cast before pushing
+      values onto the stack. For example, `push @INT 1;` would push `1.0r` onto 
+      the stack.
 
 
